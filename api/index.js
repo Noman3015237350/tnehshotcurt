@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,12 +34,9 @@ app.get('/api/create-key', async (req, res) => {
   }
   
   try {
-    // Import fetch dynamically
-    const fetch = (await import('node-fetch')).default;
-    
     // Create short URL using TinyURL
-    const tinyUrlResponse = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
-    const shortUrl = await tinyUrlResponse.text();
+    const response = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
+    const shortUrl = await response.text();
     
     // Store mapping
     urlStore.set(key, { originalUrl: url, shortUrl, createdAt: new Date() });
@@ -74,7 +72,7 @@ app.get('/api/check', (req, res) => {
   });
 });
 
-// Get URL by API key (simplified - no auth for demo)
+// Get URL by API key
 app.get('/api/apikey', async (req, res) => {
   const { apikey, url } = req.query;
   
@@ -82,11 +80,9 @@ app.get('/api/apikey', async (req, res) => {
     return res.status(400).json({ error: 'apikey and url parameters are required' });
   }
   
-  // For demo, accept any apikey
   try {
-    const fetch = (await import('node-fetch')).default;
-    const tinyUrlResponse = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
-    const shortUrl = await tinyUrlResponse.text();
+    const response = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
+    const shortUrl = await response.text();
     
     res.json({
       success: true,
@@ -123,5 +119,4 @@ app.listen(PORT, () => {
   console.log(`   - GET /api/create-key?url=&key=`);
   console.log(`   - GET /api/check?key=`);
   console.log(`   - GET /api/apikey?apikey=&url=`);
-  console.log(`   - GET /:key for redirect`);
 });
