@@ -1,23 +1,15 @@
 const express = require('express');
-const cors = require('cors');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const router = express.Router();
+const fetch = require('node-fetch');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
-
-// Main TinyURL API endpoint
+// Main TinyURL API
 const TINYURL_API = 'https://tinyurl.com/api-create.php';
 
 // Store for custom keys (in production, use a database)
 const urlStore = new Map();
 
 // Create short URL with custom key
-app.get('/api/create-key', async (req, res) => {
+router.get('/create-key', async (req, res) => {
   const { url, key } = req.query;
   
   if (!url) {
@@ -35,8 +27,8 @@ app.get('/api/create-key', async (req, res) => {
   
   try {
     // Create short URL using TinyURL
-    const response = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
-    const shortUrl = await response.text();
+    const tinyUrlResponse = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
+    const shortUrl = await tinyUrlResponse.text();
     
     // Store mapping
     urlStore.set(key, { originalUrl: url, shortUrl, createdAt: new Date() });
@@ -49,13 +41,12 @@ app.get('/api/create-key', async (req, res) => {
       customUrl: `https://tnehshotcurt.onrender.com/${key}`
     });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to create short URL: ' + error.message });
+    res.status(500).json({ error: 'Failed to create short URL' });
   }
 });
 
 // Check key exists
-app.get('/api/check', (req, res) => {
+router.get('/check', async (req, res) => {
   const { key } = req.query;
   
   if (!key) {
@@ -73,7 +64,7 @@ app.get('/api/check', (req, res) => {
 });
 
 // Get URL by API key
-app.get('/api/apikey', async (req, res) => {
+router.get('/apikey', async (req, res) => {
   const { apikey, url } = req.query;
   
   if (!apikey || !url) {
@@ -81,8 +72,8 @@ app.get('/api/apikey', async (req, res) => {
   }
   
   try {
-    const response = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
-    const shortUrl = await response.text();
+    const tinyUrlResponse = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
+    const shortUrl = await tinyUrlResponse.text();
     
     res.json({
       success: true,
@@ -96,27 +87,15 @@ app.get('/api/apikey', async (req, res) => {
 });
 
 // Redirect endpoint
-app.get('/:key', (req, res) => {
+router.get('/:key', (req, res) => {
   const { key } = req.params;
   const data = urlStore.get(key);
   
   if (data && data.originalUrl) {
     res.redirect(data.originalUrl);
   } else {
-    res.status(404).send('Short URL not found');
+    res.status(404).json({ error: 'Short URL not found' });
   }
 });
 
-// Home page
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 TNEH Shortcut URL API running on port ${PORT}`);
-  console.log(`📡 API Endpoints:`);
-  console.log(`   - GET /api/create-key?url=&key=`);
-  console.log(`   - GET /api/check?key=`);
-  console.log(`   - GET /api/apikey?apikey=&url=`);
-});
+module.exports = router;
