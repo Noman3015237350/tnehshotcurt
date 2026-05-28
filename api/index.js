@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// In-memory storage (for demo purposes)
+// In-memory storage
 const urlDatabase = new Map();
 const apiKeyDatabase = new Map();
 
@@ -53,7 +53,8 @@ app.get('/api/create-key', (req, res) => {
 
 /**
  * Endpoint 2: Create Short URL with API Key
- * GET /api/apikey?apikey=YOUR_KEY&url=YOUR_URL
+ * GET /api/apikey=&url=
+ * Example: /api/apikey?apikey=YOUR_API_KEY&url=https://google.com
  */
 app.get('/api/apikey', (req, res) => {
   const apiKey = req.query.apikey;
@@ -117,7 +118,8 @@ app.get('/api/apikey', (req, res) => {
 
 /**
  * Endpoint 3: Check URL Stats by Key
- * GET /api/check?key=YOUR_SHORT_KEY
+ * GET /api/check=&key=
+ * Example: /api/check?key=abc123
  */
 app.get('/api/check', (req, res) => {
   const shortKey = req.query.key;
@@ -224,3 +226,5 @@ app.listen(PORT, () => {
   console.log(`   GET /api/check?key=YOUR_SHORT_KEY`);
   console.log(`   GET /api/:shortKey`);
 });
+
+module.exports = app;
