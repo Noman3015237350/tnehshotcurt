@@ -1,15 +1,22 @@
 const express = require('express');
-const router = express.Router();
-const fetch = require('node-fetch');
+const cors = require('cors');
 
-// Main TinyURL API
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
+// Main TinyURL API endpoint
 const TINYURL_API = 'https://tinyurl.com/api-create.php';
 
 // Store for custom keys (in production, use a database)
 const urlStore = new Map();
 
 // Create short URL with custom key
-router.get('/create-key', async (req, res) => {
+app.get('/api/create-key', async (req, res) => {
   const { url, key } = req.query;
   
   if (!url) {
@@ -26,6 +33,9 @@ router.get('/create-key', async (req, res) => {
   }
   
   try {
+    // Import fetch dynamically
+    const fetch = (await import('node-fetch')).default;
+    
     // Create short URL using TinyURL
     const tinyUrlResponse = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
     const shortUrl = await tinyUrlResponse.text();
@@ -41,12 +51,13 @@ router.get('/create-key', async (req, res) => {
       customUrl: `https://tnehshotcurt.onrender.com/${key}`
     });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create short URL' });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to create short URL: ' + error.message });
   }
 });
 
 // Check key exists
-router.get('/check', async (req, res) => {
+app.get('/api/check', (req, res) => {
   const { key } = req.query;
   
   if (!key) {
@@ -64,7 +75,7 @@ router.get('/check', async (req, res) => {
 });
 
 // Get URL by API key (simplified - no auth for demo)
-router.get('/apikey', async (req, res) => {
+app.get('/api/apikey', async (req, res) => {
   const { apikey, url } = req.query;
   
   if (!apikey || !url) {
@@ -73,6 +84,7 @@ router.get('/apikey', async (req, res) => {
   
   // For demo, accept any apikey
   try {
+    const fetch = (await import('node-fetch')).default;
     const tinyUrlResponse = await fetch(`${TINYURL_API}?url=${encodeURIComponent(url)}`);
     const shortUrl = await tinyUrlResponse.text();
     
@@ -88,7 +100,7 @@ router.get('/apikey', async (req, res) => {
 });
 
 // Redirect endpoint
-router.get('/:key', (req, res) => {
+app.get('/:key', (req, res) => {
   const { key } = req.params;
   const data = urlStore.get(key);
   
@@ -99,4 +111,17 @@ router.get('/:key', (req, res) => {
   }
 });
 
-module.exports = router;
+// Home page
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 TNEH Shortcut URL API running on port ${PORT}`);
+  console.log(`📡 API Endpoints:`);
+  console.log(`   - GET /api/create-key?url=&key=`);
+  console.log(`   - GET /api/check?key=`);
+  console.log(`   - GET /api/apikey?apikey=&url=`);
+  console.log(`   - GET /:key for redirect`);
+});
