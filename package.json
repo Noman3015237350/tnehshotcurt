@@ -11,7 +11,7 @@
     "node-fetch": "^2.7.0",
     "cors": "^2.8.5"
   },
-  "engines": {
-    "node": "18.x"
-  }
+  "keywords": ["url", "shortener", "api", "tinyurl"],
+  "author": "TNEH",
+  "license": "MIT"
 }
