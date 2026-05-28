@@ -1,13 +1,17 @@
 {
-  "name": "tneh-telegram-bot",
+  "name": "tneh-shortcut-url-api",
   "version": "1.0.0",
-  "description": "TNEH URL Shortener Telegram Bot",
-  "main": "bot.js",
+  "description": "TNEH Shortcut URL API Service",
+  "main": "index.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.61.0",
-    "node-fetch": "^2.7.0"
-  }
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0",
+    "cors": "^2.8.5"
+  },
+  "keywords": ["url", "shortener", "api", "tinyurl"],
+  "author": "TNEH",
+  "license": "MIT"
 }
