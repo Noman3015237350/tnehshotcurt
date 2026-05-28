@@ -182,7 +182,7 @@
     </div>
     
     <script>
-        const API_BASE = 'https://tnehshotcurt.onrender.com';
+        const API_BASE = window.location.origin;
         
         async function createShortUrl() {
             const url = document.getElementById('urlInput').value;
@@ -205,14 +205,19 @@
                 const data = await response.json();
                 
                 resultDiv.style.display = 'block';
-                resultDiv.style.background = '#e8f5e9';
-                resultDiv.innerHTML = `
-                    <strong>✅ Success!</strong><br>
-                    Original URL: ${data.originalUrl}<br>
-                    Short URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a><br>
-                    ${data.customUrl ? `Custom URL: <a href="${data.customUrl}" target="_blank">${data.customUrl}</a><br>` : ''}
-                    ${data.key ? `Key: ${data.key}` : ''}
-                `;
+                if (response.ok) {
+                    resultDiv.style.background = '#e8f5e9';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Success!</strong><br>
+                        Original URL: ${data.originalUrl}<br>
+                        Short URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a><br>
+                        ${data.customUrl ? `Custom URL: <a href="${data.customUrl}" target="_blank">${data.customUrl}</a><br>` : ''}
+                        ${data.key ? `Key: ${data.key}` : ''}
+                    `;
+                } else {
+                    resultDiv.style.background = '#ffebee';
+                    resultDiv.innerHTML = `<strong>❌ Error:</strong> ${data.error || 'Failed to create short URL'}`;
+                }
             } catch (error) {
                 resultDiv.style.display = 'block';
                 resultDiv.style.background = '#ffebee';
