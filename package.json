@@ -1,19 +1,18 @@
 {
-  "name": "tneh-shortcut-url-api",
+  "name": "permission-api",
   "version": "1.0.0",
-  "description": "TNEH Shortcut URL API - A simple URL shortener service",
+  "description": "Advanced permission access API",
   "main": "api/index.js",
   "scripts": {
     "start": "node api/index.js",
     "dev": "nodemon api/index.js"
   },
-  "keywords": ["url-shortener", "api", "express", "tinyurl"],
-  "author": "TNEH",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "nanoid": "^3.3.6"
+    "uuid": "^9.0.0",
+    "express-session": "^1.17.3",
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
