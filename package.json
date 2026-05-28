@@ -1,17 +1,21 @@
 {
-  "name": "tneh-shotcurt-api",
+  "name": "tneh-shortcut-url-api",
   "version": "1.0.0",
-  "description": "TNEH Shortcut URL API Service",
-  "main": "index.js",
+  "description": "TNEH Shortcut URL API - A simple URL shortener service",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
   },
+  "keywords": ["url-shortener", "api", "express", "tinyurl"],
+  "author": "TNEH",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
-    "node-fetch": "^2.7.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "nanoid": "^3.3.6"
   },
-  "keywords": ["url", "shortener", "api", "tinyurl"],
-  "author": "TNEH",
-  "license": "MIT"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }
