@@ -2,10 +2,10 @@
   "name": "tneh-shortcut-url-api",
   "version": "1.0.0",
   "description": "TNEH Shortcut URL API - A simple URL shortener service",
-  "main": "api/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node api/index.js",
-    "dev": "nodemon api/index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": ["url-shortener", "api", "express", "tinyurl"],
   "author": "TNEH",
